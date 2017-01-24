@@ -41,9 +41,9 @@ public class GetInfo {
 		}
 
 		return urlIn;
-	}
+	} //-end-method-//
 
-	// get list of FB URLs from search string
+	// get list of FaceBook page URLs from search string
 	public static ArrayList<String> ScrapeFBSearch(String searchTerm, String access_token) {
 
 		ArrayList<String> results = new ArrayList<String>();
@@ -82,6 +82,35 @@ public class GetInfo {
 		}
 
 		return results;
-	}
+	} //-end-method-//
+
+		// returns last page's last post ID from a pageId
+		public static String getPageFeed(String pageID, String access_token) throws IOException, ParseException {
+		String urls = "https://graph.facebook.com/v2.8/" + pageID + "/feed?access_token=" + access_token;
+		URL url = new URL(urls);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		con.setDoOutput(true);
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+			// bufferedReader to string
+			String inLine = "";
+			while ((inLine = in.readLine()) != null) {
+				String temp = inLine;
+				if (temp.contains("\"id\"")) {
+					temp = temp.substring(temp.indexOf("\"id\"") + 6);
+					temp = temp.substring(0, temp.indexOf("\""));
+					return temp;
+				} else {
+					return "";
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+		return "";
+	} //-end-method-//
 
 }
