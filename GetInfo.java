@@ -113,4 +113,54 @@ public class GetInfo {
 		return "";
 	} //-end-method-//
 
-}
+		// returns the number of likes a page has from the url of the page
+		public static String getPageLikeCount(String urlIn) {
+		URL url;
+		try {
+			url = new URL("https://www.facebook.com/v2.5/plugins/like.php?locale=en_US&href=" + urlIn);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+		try {
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			con.setDoOutput(true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+			String inLine = "";
+			while ((inLine = in.readLine()) != null) {
+				// System.out.println(inLine);
+				if (inLine.contains("<span class=\"hidden_elem\" id=\"u_0_1\">")) {
+					String result = inLine.substring(inLine.indexOf("u_0_1") + 7);
+					result = result.substring(0, result.indexOf(".<"));
+					// turn into char array
+
+					// cut everything before the first int in the string
+					char[] temp = result.toCharArray();
+					for (int i = 0; i < temp.length; i++) {
+						if (!Character.isLetter(temp[i]) && !Character.toString(temp[i]).matches(" ")) {
+							result = result.substring(i);
+							break;
+						}
+					}
+
+					// cut everything from the next white space onwards
+					temp = result.toCharArray();
+					for (int i = 0; i < result.length(); i++) {
+						if (Character.toString(temp[i]).matches(" ")) {
+							result = result.substring(0, i);
+							break;
+						}
+					}
+					return result;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+		return urlIn;
+	} //-end-method-//
+	
+} //-end-class-//
