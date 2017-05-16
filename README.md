@@ -20,3 +20,5 @@ public static ArrayList<String> ScrapeFBSearch(String searchTerm, String access_
 public static int searchAndPost(String logfilename, String filename, String keyword, String app_access_token)
 
 public static String getPageID(String urlIn)
+
+public static ArrayList<String> getPageFeedArray(String pageID, String access_token)
