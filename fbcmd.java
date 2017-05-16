@@ -360,4 +360,36 @@ public class fbcmd{
 		System.out.println();
 		return count;
 	}
+	// get pageID from FB URL
+	public static String getPageID(String urlIn) {
+		URL url;
+		try {
+			url = new URL(urlIn);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+		try {
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			con.setDoOutput(true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+			String inLine = "";
+			while ((inLine = in.readLine()) != null) {
+				// System.out.println(inLine);
+				if (inLine.contains("\"pageID\":")) {
+					String result = inLine.substring(inLine.indexOf("\"pageID\":") + 10);
+					result = result.substring(0, result.indexOf("\","));
+					return result;
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+
+		return urlIn;
+	}
 }
