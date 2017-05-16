@@ -172,6 +172,44 @@ public class fbcmd{
 		return "";
 	}
 
+	public static ArrayList<String> getPageFeedArray(String pageID, String access_token) throws IOException{
+		ArrayList< String> feedArray = new ArrayList< String >();
+		String urls = "https://graph.facebook.com/v2.8/" + pageID + "/feed?access_token=" + access_token;
+		String temp = "";
+		String response = "";
+		URL url = new URL(urls);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		con.setDoOutput(true);
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+
+			// bufferedReader to string
+			String inLine = "";
+			while ((inLine = in.readLine()) != null) {
+				temp = inLine;
+				if (temp.contains("\"id\"")) {
+					// let's splti this jawn
+					String[] tempArray = temp.split("}");
+					for( int i = 0; i < tempArray.length; i++ ){
+						temp = tempArray[ i ];
+						temp = temp.substring(temp.indexOf("\"id\"") + 6);
+						temp = temp.substring(0, temp.indexOf("\""));
+						feedArray.add( temp );
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return feedArray;
+		}
+		// remove the last entry which is just random text anyway
+		feedArray.remove( feedArray.size() - 1 );
+		return feedArray;
+	}
+
 	public static String getPageLikeCount(String urlIn) {
 		URL url;
 		try {
